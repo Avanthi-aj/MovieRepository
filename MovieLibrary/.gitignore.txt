@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/csharp,dotnetcore,aspnetcore,database
-# Edit at https://www.toptal.com/developers/gitignore?templates=csharp,dotnetcore,aspnetcore,database
+# Created by https://www.toptal.com/developers/gitignore/api/specflow,csharp,dotnetcore,aspnetcore,database
+# Edit at https://www.toptal.com/developers/gitignore?templates=specflow,csharp,dotnetcore,aspnetcore,database
 
 ### ASPNETCore ###
 ## Ignore Visual Studio temporary files, build results, and
@@ -537,8 +537,16 @@ FodyWeavers.xsd
 bin/
 obj/
 
+.csproj
+*.csproj
+
 # Common node modules locations
 /node_modules
 /wwwroot/node_modules
 
-# End of https://www.toptal.com/developers/gitignore/api/csharp,dotnetcore,aspnetcore,database
+### SpecFlow ###
+# Feature Files
+*.feature.cs
+*.feature.xlsx.*
+
+# End of https://www.toptal.com/developers/gitignore/api/specflow,csharp,dotnetcore,aspnetcore,database

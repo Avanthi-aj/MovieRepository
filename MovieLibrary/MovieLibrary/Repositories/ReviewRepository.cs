@@ -1,79 +1,74 @@
 ﻿using Microsoft.Extensions.Options;
-using MovieLibrary.Entities;
+using MovieLibrary.Models;
 using MovieLibrary.Repositories.Interfaces;
 
 namespace MovieLibrary.Repositories
 {
-    public class ReviewRepository :BaseRepository<Review>, IReviewRepository
+    public class ReviewRepository : BaseRepository<Review>, IReviewRepository
     {
-        public ReviewRepository(IOptions<ConnectionString> connectionString)
-            : base(connectionString.Value.IMDB)
+        public ReviewRepository(IOptions<ConnectionString> connectionString) :
+            base(connectionString.Value.IMDB)
         {
         }
-        public void Create(Review review)
+        public int Create(Review review)
         {
-            const string query = @"
-INSERT INTO Foundation.Reviews(Message,Movie_Id)
-VALUES (
-	@Message
-	,@MovieId
-	)";
-            Create(query, review);
-        }
 
-        public void Delete(int id)
-        {
-            const string query = @"
-DELETE
-FROM Foundation.Reviews
-WHERE [Id] = @id";
-
-            if (!Delete(query, new { id }))
+            return StoredProcedure("usp_insert_review", new
             {
-                throw new InvalidOperationException("Could not delete review");
-            }
-        }
+                review.Message,
+                review.MovieId
+            }).Id;
 
-        public Review Get(int id)
-        {
-            const string query = @"
-SELECT [Id]
-	,[Message]
-	,[Movie_Id] AS [MovieId]
-FROM Foundation.Reviews
-WHERE [Id] = @id";
-            return QueryDBSingle(query, new { id });
-        }
-
-        public List<Review> Get()
-        {
-            const string query = @"
-SELECT [Id]
-	,[Message]
-	,[Movie_Id] AS [MovieId]
-FROM Foundation.Reviews";
-            return QueryDB(query, null).ToList();
         }
 
         public void Update(int id, Review review)
         {
-            const string query = @"
-
-UPDATE Foundation.Reviews
-
-SET [Message] = @Message
-
-	,[Movie_Id] = @MovieId
-
-WHERE [Id] = @id";
-
             review.Id = id;
-         
-
-            if (!Update(query, review))
+            StoredProcedure("usp_update_review", new
             {
-                throw new InvalidOperationException("Could not update review");
-            }
+                review.Id,
+                review.Message,
+                review.MovieId
+            });
         }
+
+        public Review Get(int id, int movieId)
+        {
+            string sql = @"
+SELECT [Id]
+    ,[Message]
+    ,[MovieId]
+FROM Reviews (NOLOCK)
+WHERE [Id]= @id 
+AND [MovieId] = @movieId";
+
+            return GetById(sql, new { Id = id, MovieId = movieId });
+        }
+
+        public List<Review> Get(int movieId)
+        {
+            string sql = @"
+SELECT [Id]
+    ,[Message]
+    ,[MovieId]
+FROM Reviews (NOLOCK)
+WHERE [MovieId] = @movieId";
+
+            return Get(sql, new { movieId }).ToList();
+        }
+
+
+
+        public void Delete(int id, int movieId)
+        {
+            string sql = @"
+DELETE 
+FROM Reviews 
+WHERE [Id] = @id 
+AND [MovieId] = @movieId";
+
+            Delete(sql, new { Id = id, MovieId = movieId });
+        }
+
     }
 }

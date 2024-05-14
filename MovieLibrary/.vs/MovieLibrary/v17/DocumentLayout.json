@@ -1,0 +1,133 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\HP\\Desktop\\MovieLibrary\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8D7E8891-D8A9-417F-AF2E-EEEA10EE2F8E}|MovieLibrary\\MovieLibrary.csproj|c:\\users\\hp\\desktop\\movielibrary\\movielibrary\\services\\producerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D7E8891-D8A9-417F-AF2E-EEEA10EE2F8E}|MovieLibrary\\MovieLibrary.csproj|solutionrelative:movielibrary\\services\\producerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D7E8891-D8A9-417F-AF2E-EEEA10EE2F8E}|MovieLibrary\\MovieLibrary.csproj|c:\\users\\hp\\desktop\\movielibrary\\movielibrary\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D7E8891-D8A9-417F-AF2E-EEEA10EE2F8E}|MovieLibrary\\MovieLibrary.csproj|solutionrelative:movielibrary\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D7E8891-D8A9-417F-AF2E-EEEA10EE2F8E}|MovieLibrary\\MovieLibrary.csproj|c:\\users\\hp\\desktop\\movielibrary\\movielibrary\\teststartup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D7E8891-D8A9-417F-AF2E-EEEA10EE2F8E}|MovieLibrary\\MovieLibrary.csproj|solutionrelative:movielibrary\\teststartup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D7E8891-D8A9-417F-AF2E-EEEA10EE2F8E}|MovieLibrary\\MovieLibrary.csproj|c:\\users\\hp\\desktop\\movielibrary\\movielibrary\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D7E8891-D8A9-417F-AF2E-EEEA10EE2F8E}|MovieLibrary\\MovieLibrary.csproj|solutionrelative:movielibrary\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6AF0FC84-7622-404D-A2B1-DED93A30AB89}|MovieLibrary.Test\\MovieLibrary.Test.csproj|c:\\users\\hp\\desktop\\movielibrary\\movielibrary.test\\stepdefinitions\\basestepdefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6AF0FC84-7622-404D-A2B1-DED93A30AB89}|MovieLibrary.Test\\MovieLibrary.Test.csproj|solutionrelative:movielibrary.test\\stepdefinitions\\basestepdefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6AF0FC84-7622-404D-A2B1-DED93A30AB89}|MovieLibrary.Test\\MovieLibrary.Test.csproj|c:\\users\\hp\\desktop\\movielibrary\\movielibrary.test\\mockrepositories\\actormock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6AF0FC84-7622-404D-A2B1-DED93A30AB89}|MovieLibrary.Test\\MovieLibrary.Test.csproj|solutionrelative:movielibrary.test\\mockrepositories\\actormock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ProducerService.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary\\Services\\ProducerService.cs",
+              "RelativeDocumentMoniker": "MovieLibrary\\Services\\ProducerService.cs",
+              "ToolTip": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary\\Services\\ProducerService.cs",
+              "RelativeToolTip": "MovieLibrary\\Services\\ProducerService.cs",
+              "ViewState": "AQIAADUAAAAAAAAAAAAIwBoAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T05:56:08.697Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Startup.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary\\Startup.cs",
+              "RelativeDocumentMoniker": "MovieLibrary\\Startup.cs",
+              "ToolTip": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary\\Startup.cs",
+              "RelativeToolTip": "MovieLibrary\\Startup.cs",
+              "ViewState": "AQIAABIAAAAAAAAAAAAowBQAAAALAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T04:31:49.469Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TestStartup.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary\\TestStartup.cs",
+              "RelativeDocumentMoniker": "MovieLibrary\\TestStartup.cs",
+              "ToolTip": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary\\TestStartup.cs",
+              "RelativeToolTip": "MovieLibrary\\TestStartup.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T04:31:48.312Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary\\Program.cs",
+              "RelativeDocumentMoniker": "MovieLibrary\\Program.cs",
+              "ToolTip": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary\\Program.cs",
+              "RelativeToolTip": "MovieLibrary\\Program.cs",
+              "ViewState": "AQIAAAcAAAAAAAAAAAAgwAgAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-14T04:30:33.615Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "BaseStepDefinition.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary.Test\\StepDefinitions\\BaseStepDefinition.cs",
+              "RelativeDocumentMoniker": "MovieLibrary.Test\\StepDefinitions\\BaseStepDefinition.cs",
+              "ToolTip": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary.Test\\StepDefinitions\\BaseStepDefinition.cs",
+              "RelativeToolTip": "MovieLibrary.Test\\StepDefinitions\\BaseStepDefinition.cs",
+              "ViewState": "AQIAACAAAAAAAAAAAAAuwEoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-13T06:24:24.76Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ActorMock.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary.Test\\MockRepositories\\ActorMock.cs",
+              "RelativeDocumentMoniker": "MovieLibrary.Test\\MockRepositories\\ActorMock.cs",
+              "ToolTip": "C:\\Users\\HP\\Desktop\\MovieLibrary\\MovieLibrary.Test\\MockRepositories\\ActorMock.cs",
+              "RelativeToolTip": "MovieLibrary.Test\\MockRepositories\\ActorMock.cs",
+              "ViewState": "AQIAABEAAAAAAAAAAAAQwA8AAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-11T06:34:55.43Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

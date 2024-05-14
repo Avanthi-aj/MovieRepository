@@ -1,15 +1,15 @@
-﻿using MovieLibrary.Entities;
+﻿using MovieLibrary.ResponseModel;
 using MovieLibrary.RequestModel;
-using MovieLibrary.ResponseModel;
+
 
 namespace MovieLibrary.Services.Interfaces
 {
     public interface IReviewService
     {
-        void Create(ReviewRequestModel review);
-        void Update(int id, ReviewRequestModel review);
-        ReviewResponseModel Get(int id);
-        List<ReviewResponseModel> Get();
-        void Delete(int id);
+        public int Create(int movieId,ReviewRequestModel review);
+        public void Update(int id,int movieId, ReviewRequestModel review);
+        public void Delete(int id, int movieId);
+        public ReviewResponseModel Get(int id,int movieId);
+        public List<ReviewResponseModel> Get(int movieId);
     }
 }

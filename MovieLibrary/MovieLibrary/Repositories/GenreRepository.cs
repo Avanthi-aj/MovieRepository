@@ -1,76 +1,74 @@
 ﻿using Microsoft.Extensions.Options;
-using MovieLibrary.Entities;
+using MovieLibrary.Models;
 using MovieLibrary.Repositories.Interfaces;
 
 namespace MovieLibrary.Repositories
 {
-    public class GenreRepository :BaseRepository<Genre>, IGenreRepository
+    public class GenreRepository : BaseRepository<Genre>, IGenreRepository
     {
-        public GenreRepository(IOptions<ConnectionString> connectionString)
-            : base(connectionString.Value.IMDB)
+        public GenreRepository(IOptions<ConnectionString> connectionString) :
+            base(connectionString.Value.IMDB)
         {
         }
-        public void Create(Genre genre)
+        public int Create(Genre genre)
         {
-            const string query = @"
-INSERT INTO Foundation.Genres(Name)
-VALUES (
-	@Name
-	)
-";
-            Create(query, genre);
-        }
-
-        public void Delete(int id)
-        {
-            const string query = @"
-DELETE
-FROM Foundation.Genres
-WHERE [Id] = @id";
-
-            if (!Delete(query, new { id }))
+            return StoredProcedure("usp_insert_genre", new
             {
-                throw new InvalidOperationException("Could not delete genre");
-            }
-        }
-
-        public Genre Get(int id)
-        {
-            const string query = @"
-SELECT [Id]
-	,[Name]
-FROM Foundation.Genres
-WHERE [Id] = @id";
-            return QueryDBSingle(query, new { id });
-        }
-
-        public List<Genre> Get()
-        {
-            const string query = @"
-SELECT [Id]
-	,[Name]
-FROM Foundation.Genres";
-            return QueryDB(query, null).ToList();
+                genre.Name,
+            }).Id;
         }
 
         public void Update(int id, Genre genre)
         {
-            const string query = @"
+            genre.Id = id;
+            StoredProcedure("usp_update_genre", new
+            {
+                genre.Id,
+                genre.Name,
+            });
+        }
 
-UPDATE Foundation.Genres
-
-SET [Name] = @Name
-
-
+        public Genre Get(int id)
+        {
+            string sql = @"
+SELECT [Id]
+    ,[Name]
+FROM Genres (NOLOCK)
 WHERE [Id] = @id";
 
-            genre.Id = id;
-
-            if (!Update(query, genre))
-            {
-                throw new InvalidOperationException("Could not update actor");
-            }
+            return GetById(sql, new { Id = id });
         }
-    }
 
+        public List<Genre> Get()
+        {
+            string sql = @"
+SELECT [Id]
+    ,[Name]
+FROM Genres (NOLOCK)";
+
+            return Get(sql).ToList();
+        }
+
+        public List<Genre> GetByMovie(int movieId)
+        {
+            string sql = @"
+SELECT g.[Id]
+	,g.[Name]
+FROM genres AS g (NOLOCK)
+INNER JOIN Movies_Genres AS m ON g.[Id] = m.[GenreId]
+WHERE m.[MovieId] = @movieId";
+
+            return Get(sql, new { movieId }).ToList();
+        }
+
+        public void Delete(int id)
+        {
+            string sql = @"DELETE 
+FROM Genres 
+WHERE [Id] = @id";
+
+            Delete(sql, new { Id = id });
+        }
+
+    }
 }

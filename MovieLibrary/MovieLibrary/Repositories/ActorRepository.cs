@@ -1,90 +1,95 @@
-﻿using Microsoft.Extensions.Options;
-using MovieLibrary.Entities;
+﻿using System.Globalization;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
+using MovieLibrary.Models;
 using MovieLibrary.Repositories.Interfaces;
 
 namespace MovieLibrary.Repositories
 {
     public class ActorRepository : BaseRepository<Actor>, IActorRepository
     {
-
         public ActorRepository(IOptions<ConnectionString> connectionString)
             : base(connectionString.Value.IMDB)
         {
         }
-        public void Create(Actor actor)
-        {
-            const string query = @"
-INSERT INTO Foundation.Actors(First_Name, Bio, DOB, Sex)
-VALUES (
-	@Name
-	,@Bio
-	,@DOB
-	,@Gender
-	)
-";
-            Create(query, actor);
-        }
 
-        public void Delete(int id)
+        public int Create(Actor actor)
         {
-            const string query = @"
-DELETE
-FROM Foundation.Actors
-WHERE [Id] = @id";
-
-            if (!Delete(query, new { id }))
+            return StoredProcedure("usp_insert_actor", new
             {
-                throw new InvalidOperationException("Could not delete actor");
-            }
-        }
-
-        public Actor Get(int id)
-        {
-            const string query = @"
-SELECT [Id]
-	,[First_Name] AS [Name]
-	,[Bio]
-	,[DOB]
-	,[Sex] AS [Gender]
-FROM Foundation.Actors
-WHERE [Id] = @id";
-            return QueryDBSingle(query, new { id });
-        }
-
-        public List<Actor> Get()
-        {
-            const string query = @"
-SELECT [Id]
-	,[First_Name] AS [Name]
-	,[Bio]
-	,[DOB]
-	,[Sex] AS [Gender]
-FROM Foundation.Actors";
-            return QueryDB(query, null).ToList();
+                actor.Name,
+                actor.Bio,
+                actor.DOB,
+                actor.Gender
+            }).Id;
         }
 
         public void Update(int id, Actor actor)
         {
-            const string query = @"
+            actor.Id = id;
+            StoredProcedure("usp_update_actor", new
+            {
+                actor.Id,
+                actor.Name,
+                actor.Bio,
+                actor.DOB,
+                actor.Gender
+            });
+        }
 
-UPDATE Foundation.Actors
-
-SET [First_Name] = @Name
-
-	,[Bio] = @Bio
-
-	,[DOB] = @DOB
-
-	,[Sex] = @Gender
-
+        public Actor Get(int id)
+        {
+            string sql = @"
+SELECT [Id]
+	,[Name]
+	,[Bio]
+	,[DOB]
+	,[Gender]
+FROM Actors (NOLOCK)
 WHERE [Id] = @id";
 
-            actor.Id = id;
-
-            if (!Update(query, actor))
-            {
-                throw new InvalidOperationException("Could not update actor");
-            }
+            return GetById(sql, new { Id = id });
         }
+
+        public List<Actor> Get()
+        {
+            string sql = @"
+SELECT [Id]
+	,[Name]
+	,[Bio]
+	,[DOB]
+	,[Gender]
+FROM Actors (NOLOCK)";
+
+            return Get(sql).ToList();
+
+        }
+
+        public List<Actor> GetByMovie(int movieId)
+        {
+            string sql = @"
+SELECT a.[Id]
+	,a.[Name]
+	,a.[Bio]
+	,a.[DOB]
+    ,a.[Gender]
+FROM actors AS a (NOLOCK)
+INNER JOIN Actors_Movies AS m ON a.[Id] = m.[ActorId]
+WHERE m.[MovieId] = @movieId";
+
+            return Get(sql, new { movieId }).ToList();
+        }
+
+        public void Delete(int id)
+        {
+            string sql = @"
+DELETE
+FROM Actors
+WHERE [Id] = @id";
+
+            Delete(sql, new { Id = id });
+        }
+
     }
 }

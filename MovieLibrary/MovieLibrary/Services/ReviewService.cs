@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using MovieLibrary.Entities;
+using Microsoft.Identity.Client;
+using MovieLibrary.Exceptions;
+using MovieLibrary.Models;
 using MovieLibrary.Repositories;
 using MovieLibrary.Repositories.Interfaces;
 using MovieLibrary.RequestModel;
@@ -11,68 +13,61 @@ namespace MovieLibrary.Services
     public class ReviewService : IReviewService
     {
         private readonly IReviewRepository _reviewRepository;
-        private IMapper _mapper;
-        public ReviewService(IReviewRepository reviewRepository, IMapper mapper)
+        private readonly IMovieService _movieService;
+        private readonly IMapper _mapper;
+
+        public ReviewService(IReviewRepository reviewRepository, IMapper mapper, IMovieService movieService)
         {
             _reviewRepository = reviewRepository;
             _mapper = mapper;
+            _movieService = movieService;
+        }
+        public int Create(int movieId, ReviewRequestModel review)
+        {
+            review.MovieId = movieId;
+            if (string.IsNullOrEmpty(review.Message))
+            {
+                throw new BadInputException($"Message cannot be empty");
+            }
+            _movieService.Get(movieId);
+            return _reviewRepository.Create(_mapper.Map<Review>(review));
+            
         }
 
-        public void Create(ReviewRequestModel review)
+        public void Delete(int id, int movieId)
         {
-            _reviewRepository.Create(_mapper.Map<Review>(review));
+            _movieService.Get(movieId);
+            Get(id,movieId);
+            _reviewRepository.Delete(id, movieId);
         }
 
-        public void Delete(int id)
+        public ReviewResponseModel Get(int id, int movieId)
         {
-            try
+            _movieService.Get(movieId);
+            var review = _reviewRepository.Get(id, movieId);
+            if(review == null)
             {
-                ValidateById(id);
-                _reviewRepository.Delete(id);
+                throw new BadInputException($"Review with ID {id} does not exist");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            return _mapper.Map<ReviewResponseModel>(review);
         }
 
-        public ReviewResponseModel Get(int id)
+        public List<ReviewResponseModel> Get(int movieId)
         {
-            try
-            {
-                ValidateById(id);
-                return _mapper.Map<ReviewResponseModel>(_reviewRepository.Get(id));
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            _movieService.Get(movieId);
+            return _mapper.Map<List<ReviewResponseModel>>(_reviewRepository.Get(movieId));
         }
 
-        public List<ReviewResponseModel> Get()
+        public void Update(int id, int movieId, ReviewRequestModel review)
         {
-            return _mapper.Map<List<ReviewResponseModel>>(_reviewRepository.Get());
-        }
-
-        public void Update(int id, ReviewRequestModel review)
-        {
-            try
+            review.MovieId = movieId;
+            if (string.IsNullOrEmpty(review.Message))
             {
-                ValidateById(id);
-                _reviewRepository.Update(id, _mapper.Map<Review>(review));
+                throw new BadInputException($"Message cannot be empty");
             }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        private void ValidateById(int id)
-        {
-            var review = _reviewRepository.Get(id);
-            if (review == null)
-            {
-                throw new ArgumentException("Review does not exist");
-            }
+            Get(id, movieId);
+            _reviewRepository.Update(id, _mapper.Map<Review>(review));
+            
         }
     }
 }
