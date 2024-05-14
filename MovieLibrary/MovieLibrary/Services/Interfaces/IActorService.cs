@@ -1,15 +1,15 @@
-﻿using MovieLibrary.Entities;
+﻿using MovieLibrary.ResponseModel;
 using MovieLibrary.RequestModel;
-using MovieLibrary.ResponseModel;
 
 namespace MovieLibrary.Services.Interfaces
 {
     public interface IActorService
     {
-        void Create(ActorRequestModel actor);
-        void Update(int id, ActorRequestModel actor);
-        ActorResponseModel Get(int id);
-        List<ActorResponseModel> Get();
-        void Delete(int id);
+        public int Create(ActorRequestModel actor);
+        public void Update(int id, ActorRequestModel actor);
+        public void Delete(int id);
+        public ActorResponseModel Get(int id);
+        public List<ActorResponseModel> Get();
+        public List<ActorResponseModel> GetByMovie(int movieId);
     }
 }

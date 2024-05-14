@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using MovieLibrary.Entities;
+using MovieLibrary.Exceptions;
+using MovieLibrary.Models;
+using MovieLibrary.Repositories;
 using MovieLibrary.Repositories.Interfaces;
 using MovieLibrary.RequestModel;
 using MovieLibrary.ResponseModel;
@@ -12,68 +14,62 @@ namespace MovieLibrary.Services
         private readonly IGenreRepository _genreRepository;
         private readonly IMapper _mapper;
 
-        public GenreService(IGenreRepository genreRepository, IMapper mapper)
+        public GenreService(IGenreRepository genreRepository,IMapper mapper)
         {
             _genreRepository = genreRepository;
             _mapper = mapper;
         }
-
-        public void Create(GenreRequestModel genre)
+        public int Create(GenreRequestModel genre)
         {
-            _genreRepository.Create(_mapper.Map<Genre>(genre));
+            ValidateGenre(genre);
+            return _genreRepository.Create(_mapper.Map<Genre>(genre));
+        }
+
+        private void ValidateGenre(GenreRequestModel genre)
+        {
+            if (string.IsNullOrEmpty(genre.Name))
+            {
+                throw new BadInputException("Genre Name cannot be Null or Empty");
+            }
         }
 
         public void Delete(int id)
         {
-            try
+            var genre = _genreRepository.Get(id);
+            if(genre == null)
             {
-                ValidateById(id);
-                _genreRepository.Delete(id);
+                throw new NotFoundException($"Trying to delete the genre with ID {id} which is not present");
             }
-            catch(Exception)
-            {
-                throw;
-            }
+            _genreRepository.Delete(id);
         }
 
         public GenreResponseModel Get(int id)
         {
-            try
+            var genre = _genreRepository.Get(id);
+            if (genre == null)
             {
-                ValidateById(id);
-                return _mapper.Map<GenreResponseModel>(_genreRepository.Get(id));
+                throw new NotFoundException($"Genre with ID {id} does not exists");
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            return _mapper.Map<GenreResponseModel>(genre);
         }
 
         public List<GenreResponseModel> Get()
         {
-            return _mapper.Map<List<GenreResponseModel>>(_genreRepository.Get());
+            var genres = _genreRepository.Get();
+            return _mapper.Map<List<GenreResponseModel>>(genres);
         }
 
         public void Update(int id, GenreRequestModel genre)
         {
-            try
-            {
-                ValidateById(id);
-                _genreRepository.Update(id,_mapper.Map<Genre>(genre));
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            Get(id);
+            ValidateGenre(genre);
+            _genreRepository.Update(id, _mapper.Map<Genre>(genre));
         }
 
-        private void ValidateById(int id)
+        public List<GenreResponseModel> GetByMovie(int movieId)
         {
-            var genre = _genreRepository.Get(id);
-            if (genre == null)
-            {
-                throw new ArgumentException("Genre does not exist");
-            }
+            var genre = _genreRepository.GetByMovie(movieId);
+            return _mapper.Map<List<GenreResponseModel>>(genre);
         }
     }
 }

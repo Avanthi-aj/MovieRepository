@@ -1,141 +1,152 @@
-﻿using AutoMapper;
-using MovieLibrary.Entities;
+﻿using System.Xml.Linq;
+using AutoMapper;
+using MovieLibrary.Exceptions;
+using MovieLibrary.Models;
 using MovieLibrary.Repositories.Interfaces;
 using MovieLibrary.RequestModel;
 using MovieLibrary.ResponseModel;
 using MovieLibrary.Services.Interfaces;
-
 
 namespace MovieLibrary.Services
 {
     public class MovieService : IMovieService
     {
         private readonly IMovieRepository _movieRepository;
-        private readonly IGenreRepository _genreRepository;
-        private readonly IActorRepository _actorRepository;
-        private readonly IProducerRepository _producerRepository;
+        private readonly IActorService _actorService;
+        private readonly IGenreService _genreService;
+        private readonly IProducerService _producerService;
         private readonly IMapper _mapper;
+
         public MovieService(IMovieRepository movieRepository,
-                            IGenreRepository genreRepository,
-                            IActorRepository actorRepository,
-                            IProducerRepository producerRepository,
+                            IActorService actorService,
+                            IGenreService genreService,
+                            IProducerService producerService,
                             IMapper mapper)
         {
             _movieRepository = movieRepository;
-            _genreRepository = genreRepository;
-            _actorRepository = actorRepository;
-            _producerRepository = producerRepository;
+            _actorService = actorService;
+            _genreService = genreService;
+            _producerService = producerService;
             _mapper = mapper;
         }
-        public void Create(MovieRequestModel movierequestmodel)
+        public int Create(MovieRequestModel movie)
         {
-            try
+            ValidateMovie(movie);
+            return _movieRepository.Create(_mapper.Map<Movie>(movie), 
+                string.Join(',', movie.Actors), string.Join(',', movie.Genres));
+            
+        }
+
+        private void ValidateMovie(MovieRequestModel movie)
+        {
+            if (string.IsNullOrWhiteSpace(movie.Name))
             {
-                ValidateMovieRequest(movierequestmodel);
-                _movieRepository.Create(_mapper.Map<Movie>(movierequestmodel),
-                     string.Join(',', movierequestmodel.Actors), string.Join(',', movierequestmodel.Genres));
+                throw new BadInputException("Movie Name cannot be null or empty");
             }
-            catch (Exception)
+
+            if (string.IsNullOrWhiteSpace(movie.Plot))
             {
-                throw;
+                throw new BadInputException("Movie plot cannot be null or empty");
+            }
+
+            if (string.IsNullOrWhiteSpace(movie.CoverImage))
+            {
+                throw new BadInputException("Movie CoverImage cannot be null or empty");
+            }
+
+            if (movie.YearOfRelease <= 0 || movie.YearOfRelease > DateTime.Now.Year)
+            {
+                throw new BadInputException("Year of release must be a valid year");
+            }
+
+            var producer = _producerService.Get(movie.Producer);
+            if(producer == null)
+            {
+                throw new NotFoundException($"Producer with ID {movie.Producer} does not exist");
+            }
+
+            foreach( int genreId in movie.Genres){
+                var genre = _genreService.Get(genreId);
+                if(genre == null)
+                {
+                    throw new NotFoundException($"Genre with ID {genreId} does not exist");
+                }
+            }
+
+            foreach (int actorId in movie.Actors)
+            {
+                var actor = _actorService.Get(actorId);
+                if (actor == null)
+                {
+                    throw new NotFoundException($"Actor with ID {actorId} does not exist");
+                }
             }
         }
 
         public void Delete(int id)
         {
-            try
-            {
-                ValidateMovieById(id);
-                _movieRepository.Delete(id);
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public MovieResponseModel Get(int id)
-        {
-            try
-            {
-                ValidateMovieById(id);
-                return _mapper.Map<MovieResponseModel>(_movieRepository.Get(id));
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public List<MovieResponseModel> Get()
-        {
-            return _mapper.Map<List<MovieResponseModel>>(_movieRepository.Get());
-        }
-
-        public List<MovieResponseModel> GetByYear(int year)
-        {
-            return _mapper.Map<List<MovieResponseModel>>(_movieRepository.Get().Where(m=>m.YearOfRelease == year));
-        }
-
-        public void Update(int id, MovieRequestModel movierequestmodel)
-        {
-            
-            try
-            {
-                ValidateMovieRequest(movierequestmodel);
-                ValidateMovieById(id);
-                _movieRepository.Update(id,_mapper.Map<Movie>(movierequestmodel),
-                    string.Join(',', movierequestmodel.Actors), string.Join(',', movierequestmodel.Genres));
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private void ValidateMovieById(int id)
-        {
             var movie = _movieRepository.Get(id);
             if(movie == null)
             {
-                throw new ArgumentException("Movie does not exist");
+                throw new NotFoundException($"Trying to delete the movie with ID {id} which is not present");
             }
+            _movieRepository.Delete(id);
         }
 
-        public void ValidateMovieRequest(MovieRequestModel movierequest)
+
+        public MovieResponseModel Get(int id)
         {
-            var producerExists = _producerRepository.Get().Any(producer => producer.Id == movierequest.Producer);
-            if (!producerExists)
+            var movie = _movieRepository.Get(id);
+            if (movie == null)
             {
-                throw new ArgumentException("Producer does not exist");
+                throw new NotFoundException($"Movie with ID {id} does not exist");
             }
-            foreach (var actorRequestModel in movierequest.Actors)
-            {
-                if (actorRequestModel == null)
-                {
-                    throw new ArgumentNullException("Actor cannot be null");
-                }
+            var movieResponse = _mapper.Map<MovieResponseModel>(movie);
+            movieResponse.Actors = _actorService.GetByMovie(movieResponse.Id);
+            movieResponse.Genres = _genreService.GetByMovie(movieResponse.Id);
+            movieResponse.Producer = _producerService.Get(movie.Producer);
+            return movieResponse;
+        }
 
-                var actorExists = _actorRepository.Get().Any(actor => actor.Id == actorRequestModel);
-                if (!actorExists)
-                {
-                    throw new ArgumentException("Actor does not exist");
-                }
-            }
-            foreach (var genreRequestModel in movierequest.Genres)
+        public List<MovieResponseModel> GetAll(int year)
+        {
+            if (year == 0 || _movieRepository.GetAll(year).Count == 0)
             {
-                if (genreRequestModel == null)
-                {
-                    throw new ArgumentNullException("Genre cannot be null");
-                }
-
-                var genreExists = _genreRepository.Get().Any(genre => genre.Id == genreRequestModel);
-                if (!genreExists)
-                {
-                    throw new ArgumentException("Genre does not exist");
-                }
+               return GetAll();
             }
-            return;
+            else
+            {
+                var movies = _movieRepository.GetAll(year);
+                var movieResponse = _mapper.Map<List<MovieResponseModel>>(movies);
+                for (int i = 0; i < movieResponse.Count; i++)
+                {
+                    movieResponse[i].Actors = _actorService.GetByMovie(movieResponse[i].Id);
+                    movieResponse[i].Producer = _producerService.Get(movies[i].Producer);
+                    movieResponse[i].Genres = _genreService.GetByMovie(movieResponse[i].Id);
+                }
+                return movieResponse;
+            }  
+        }
+         public List<MovieResponseModel> GetAll()
+        {
+            var movies = _movieRepository.GetAll();
+            var movieResponse = _mapper.Map<List<MovieResponseModel>>(movies);
+            for(int i=0; i<movieResponse.Count; i++)
+            {
+                movieResponse[i].Actors = _actorService.GetByMovie(movieResponse[i].Id);
+                movieResponse[i].Producer = _producerService.Get(movies[i].Producer);
+                movieResponse[i].Genres = _genreService.GetByMovie(movieResponse[i].Id);
+
+            }
+            return movieResponse;
+        }
+        public void Update(int id, MovieRequestModel movie)
+        {
+            Get(id);
+            ValidateMovie(movie);
+            _movieRepository.Update(id, _mapper.Map<Movie>(movie),
+                string.Join(',', movie.Actors), string.Join(',', movie.Genres));
+           
         }
     }
 }

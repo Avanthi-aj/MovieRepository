@@ -1,10 +1,12 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Data.Common;
+
 
 namespace MovieLibrary.Repositories
 {
-    public class BaseRepository<T> where T : class
+    public class BaseRepository<T>
     {
         private readonly string _connectionString;
 
@@ -13,41 +15,34 @@ namespace MovieLibrary.Repositories
             _connectionString = connectionString;
         }
 
-        public IEnumerable<T> QueryDB(string query, object parameters)
+        public IEnumerable<T> Get(string query, object parameters)
         {
             using var connection = new SqlConnection(_connectionString);
             return connection.Query<T>(query, parameters);
         }
 
-        public T QueryDBSingle(string query, object parameters)
+        public IEnumerable<T> Get(string query)
         {
             using var connection = new SqlConnection(_connectionString);
-            return connection.QuerySingleOrDefault<T>(query, parameters);
+            return connection.Query<T>(query);
+        }
+        public T GetById(string query, object parameters)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            return connection.QueryFirstOrDefault<T>(query, parameters);
         }
 
-        public U ExecuteStoredProcedure<U>(string query, object parameters)
+        public T StoredProcedure(string procedureName, object parameters)
         {
             using var connection = new SqlConnection(_connectionString);
-            return connection.QuerySingleOrDefault<U>(query, parameters, commandType: CommandType.StoredProcedure);
+            return connection.QuerySingleOrDefault<T>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+
         }
 
-        public int Create(string query, object parameters)
+        public void Delete(string query, object parameters)
         {
             using var connection = new SqlConnection(_connectionString);
-            var identity = connection.ExecuteScalar<int>(query, param: parameters);
-            return identity;
-        }
-
-        public bool Delete(string query, object parameters)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            return connection.Execute(query, parameters) > 0;
-        }
-
-        public bool Update(string query, T parameters)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            return connection.Execute(query, parameters) > 0;
+            connection.Execute(query, parameters);
         }
     }
 }

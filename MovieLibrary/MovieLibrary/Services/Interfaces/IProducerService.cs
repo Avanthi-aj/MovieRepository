@@ -1,15 +1,15 @@
-﻿using MovieLibrary.Entities;
+﻿using MovieLibrary.ResponseModel;
 using MovieLibrary.RequestModel;
-using MovieLibrary.ResponseModel;
 
 namespace MovieLibrary.Services.Interfaces
 {
     public interface IProducerService
     {
-        void Create(ProducerRequestModel producer);
-        void Update(int id, ProducerRequestModel producer);
-        ProducerResponseModel Get(int id);
-        List<ProducerResponseModel> Get();
-        void Delete(int id);
+        public int Create(ProducerRequestModel producer);
+        public void Update(int id, ProducerRequestModel producer);
+        public void Delete(int id);
+        public ProducerResponseModel Get(int id);
+        public List<ProducerResponseModel> Get();
+        
     }
 }

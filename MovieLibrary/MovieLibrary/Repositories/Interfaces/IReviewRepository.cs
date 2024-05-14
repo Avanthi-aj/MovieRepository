@@ -1,13 +1,13 @@
-﻿using MovieLibrary.Entities;
+﻿using MovieLibrary.Models;
 
 namespace MovieLibrary.Repositories.Interfaces
 {
     public interface IReviewRepository
     {
-        void Create(Review review);
-        void Update(int id, Review review);
-        Review Get(int id);
-        List<Review> Get();
-        void Delete(int id);
+        public int Create(Review review);
+        public void Update(int id, Review review);
+        public void Delete(int movieId,int id);
+        public Review Get(int id, int movieId);
+        public List<Review> Get(int movieId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using MovieLibrary.Entities;
+using MovieLibrary.Exceptions;
+using MovieLibrary.Models;
 using MovieLibrary.Repositories.Interfaces;
 using MovieLibrary.RequestModel;
 using MovieLibrary.ResponseModel;
@@ -11,69 +12,76 @@ namespace MovieLibrary.Services
     {
         private readonly IActorRepository _actorRepository;
         private readonly IMapper _mapper;
+
         public ActorService(IActorRepository actorRepository, IMapper mapper) {
             _actorRepository = actorRepository;
             _mapper = mapper;
         }
-
-        public void Create(ActorRequestModel actor)
+        public int Create(ActorRequestModel actor)
         {
-            _actorRepository.Create(_mapper.Map<Actor>(actor));
+            ValidateActor(actor);
+            return _actorRepository.Create(_mapper.Map<Actor>(actor));
+            
+        }
+        private void ValidateActor(ActorRequestModel actor)
+        {
+            if (string.IsNullOrWhiteSpace(actor.Name))
+            {
+                throw new BadInputException("Actor Name cannot be null or empty.");
+            }
+            if (string.IsNullOrWhiteSpace(actor.Bio))
+            {
+                throw new BadInputException("Actor Bio cannot be null or empty.");
+            }
+            if (actor.DOB > DateTime.Now)
+            {
+                throw new BadInputException("DOB cannot be in the future.");
+            }
+            string[] validGenders = { "Male", "Female", "Other" };
+            if (actor.Gender != null && !validGenders.Contains(actor.Gender))
+            {
+                throw new BadInputException("Invalid gender value.");
+            }
         }
 
         public void Delete(int id)
         {
-            try {
-                ValidateById(id);
-                _actorRepository.Delete(id);
-            }
-            catch
+            var actor = _actorRepository.Get(id);
+            if (actor == null)
             {
-                throw;
+                throw new NotFoundException($"Trying to delete the actor with ID {id} which is not present");
             }
-            
+            _actorRepository.Delete(id);
         }
 
-      
         public ActorResponseModel Get(int id)
         {
-            try
+            var actor = _actorRepository.Get(id);
+            if(actor == null)
             {
-                ValidateById(id);
-                return _mapper.Map<ActorResponseModel>(_actorRepository.Get(id));
+                throw new NotFoundException($"Actor with Id {id} does not exists");
             }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+            return _mapper.Map<ActorResponseModel>(actor);
         }
 
         public List<ActorResponseModel> Get()
         {
-            return _mapper.Map<List<ActorResponseModel>>(_actorRepository.Get()); 
+            var actors = _actorRepository.Get();
+            return _mapper.Map<List<ActorResponseModel>>(actors);
         }
 
         public void Update(int id, ActorRequestModel actor)
         {
-            try
-            {
-                ValidateById(id);
-                _actorRepository.Update(id, _mapper.Map<Actor>(actor));
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+           Get(id);
+           ValidateActor(actor);
+           _actorRepository.Update(id, _mapper.Map<Actor>(actor));
+           
         }
 
-        private void ValidateById(int id)
+        public List<ActorResponseModel> GetByMovie(int movieId)
         {
-            var actor = _actorRepository.Get(id);
-            if (actor == null)
-            {
-                throw new ArgumentException("Actor does not exist");
-            }
+            var actors = _actorRepository.GetByMovie(movieId);
+            return _mapper.Map<List<ActorResponseModel>>(actors);
         }
-
     }
 }

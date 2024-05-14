@@ -1,6 +1,4 @@
-﻿using MovieLibrary.Entities;
-
-namespace MovieLibrary.ResponseModel
+﻿namespace MovieLibrary.ResponseModel
 {
     public class MovieResponseModel
     {
@@ -8,9 +6,9 @@ namespace MovieLibrary.ResponseModel
         public string Name { get; set; }
         public int YearOfRelease { get; set; }
         public string Plot { get; set; }
-        public List<int> Actors { get; set; }
-        public List<int> Genres { get; set; }
-        public int Producer { get; set; }
-        public String CoverImage { get; set; }
+        public ProducerResponseModel Producer { get; set; }
+        public List<ActorResponseModel> Actors { get; set; }
+        public List<GenreResponseModel> Genres { get; set; }
+        public string CoverImage { get; set; }
     }
 }
