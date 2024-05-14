@@ -536,7 +536,8 @@ FodyWeavers.xsd
 # .NET Core build folders
 bin/
 obj/
-
+obj
+bin
 .csproj
 *.csproj
 
